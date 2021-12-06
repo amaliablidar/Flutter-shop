@@ -10,11 +10,8 @@ class ProductItem extends StatelessWidget {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
     return Card(
-<<<<<<< HEAD
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
-=======
->>>>>>> 92086f0942c947b79f1f4ceae6a76ef9466b3cf6
       child: Column(
         children: [
           Stack(
@@ -28,11 +25,7 @@ class ProductItem extends StatelessWidget {
                 },
                 child: Image.network(
                   product.imageUrl,
-<<<<<<< HEAD
-                  fit: BoxFit.fill,
-=======
                   fit: BoxFit.cover,
->>>>>>> 92086f0942c947b79f1f4ceae6a76ef9466b3cf6
                   height: 160,
                   width: double.infinity,
                 ),
@@ -107,10 +100,7 @@ class ProductItem extends StatelessWidget {
                       child: Container(
                         child: Icon(
                           Icons.add_circle_rounded,
-<<<<<<< HEAD
                           color: Theme.of(context).accentColor,
-=======
->>>>>>> 92086f0942c947b79f1f4ceae6a76ef9466b3cf6
                         ),
                       ),
                     ),
