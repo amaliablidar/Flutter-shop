@@ -5,7 +5,7 @@ class Products with ChangeNotifier {
   final List<Product> _items = [
     Product(
       id: 'p1',
-      title: 'A really long product title for this product',
+      title: 'Red shirt',
       description: 'A red shirt - it is pretty red!',
       price: 29.99,
       imageUrl:
@@ -70,13 +70,11 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       _items[prodIndex] = newProduct;
       notifyListeners();
-    } else {
-      print('...');
     }
   }
 
-  void deleteProduct(String productId) {
-    _items.removeWhere((productid) => productid == productId);
+  void deleteProduct(String id) {
+    _items.removeWhere((product) => product.id == id);
     notifyListeners();
   }
 }

@@ -24,7 +24,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         return;
       }
       _form.currentState!.save();
-      if (_editedProduct.id != null) {
+      if (_editedProduct.id != '') {
         Provider.of<Products>(context, listen: false)
             .updateProduct(_editedProduct.id, _editedProduct);
       } else {
