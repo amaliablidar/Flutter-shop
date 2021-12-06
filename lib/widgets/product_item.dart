@@ -9,113 +9,104 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: GridTile(
-        child: Container(
-          child: Card(
+    return Card(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                    ProductDetailScreen.routeName,
+                    arguments: product.id,
+                  );
+                },
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  height: 160,
+                  width: double.infinity,
+                ),
+              ),
+              Container(
+                alignment: Alignment.topRight,
+                child: Consumer<Product>(
+                  builder: (ctx, product, child) => IconButton(
+                    icon: Icon(
+                      product.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                    ),
+                    onPressed: () {
+                      product.toggleFavoriteStatus();
+                    },
+                    color: Theme.of(context).accentColor,
+                  ),
+                  child: Text(
+                      'Never changes!'), // doesn't rebuild when Consumer updates
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+            ),
             child: Column(
               children: [
-                Stack(
+                Container(
+                  padding: EdgeInsets.only(top: 16),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    product.title,
+                    textAlign: TextAlign.left,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pushNamed(
-                          ProductDetailScreen.routeName,
-                          arguments: product.id,
-                        );
-                      },
-                      child: Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.cover,
-                        height: 160,
-                        width: double.infinity,
+                    Container(
+                      child: Text(
+                        '\$${product.price}',
                       ),
                     ),
-                    Container(
-                      alignment: Alignment.topRight,
-                      child: Consumer<Product>(
-                        builder: (ctx, product, child) => IconButton(
-                          icon: Icon(
-                            product.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
+                    GestureDetector(
+                      onTap: () {
+                        cart.addItem(product.id, product.price, product.title);
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Added item to cart!',
+                              textAlign: TextAlign.center,
+                            ),
+                            duration: Duration(seconds: 2),
+                            action: SnackBarAction(
+                                label: 'UNDO',
+                                onPressed: () {
+                                  cart.removeSingleItem(
+                                    product.id,
+                                  );
+                                }),
                           ),
-                          onPressed: () {
-                            product.toggleFavoriteStatus();
-                          },
-                          color: Theme.of(context).accentColor,
+                        );
+                      },
+                      child: Container(
+                        child: Icon(
+                          Icons.add_circle_rounded,
                         ),
-                        child: Text(
-                            'Never changes!'), // doesn't rebuild when Consumer updates
                       ),
                     ),
                   ],
-                ),
-                Container(
-                  padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(top: 16),
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          product.title,
-                          textAlign: TextAlign.left,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Text(
-                              '\$${product.price}',
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              cart.addItem(
-                                  product.id, product.price, product.title);
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Added item to cart!',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  duration: Duration(seconds: 2),
-                                  action: SnackBarAction(
-                                      label: 'UNDO',
-                                      onPressed: () {
-                                        cart.removeSingleItem(
-                                          product.id,
-                                        );
-                                      }),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              child: Icon(
-                                Icons.add_circle_rounded,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+                )
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
