@@ -15,16 +15,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   Product _editedProduct =
-      Product(id: 'a', title: ' ', description: ' ', imageUrl: ' ', price: 0);
+      Product(id: '', title: ' ', description: ' ', imageUrl: ' ', price: 0);
 
   void _saveForm() {
-    final isValid = _form.currentState!.validate();
-    if (!isValid) {
-      return;
+    if (_form.currentState != null) {
+      final isValid = _form.currentState!.validate();
+      if (!isValid) {
+        return;
+      }
+      _form.currentState!.save();
+      if (_editedProduct.id != null) {
+        Provider.of<Products>(context, listen: false)
+            .updateProduct(_editedProduct.id, _editedProduct);
+      } else {
+        Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      }
+      Navigator.of(context).pop();
     }
-    _form.currentState!.save();
-    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
-    Navigator.of(context).pop();
   }
 
   var _initValues = {
@@ -38,13 +46,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      print('Before Check');
       if (ModalRoute.of(context)?.settings.arguments != null) {
-        print('After Check');
-        print("Modal Route rsettings value:" +
-            ModalRoute.of(context)!.settings.arguments.toString());
         final String? productId =
-            ModalRoute.of(context)!.settings.arguments as String;
+            ModalRoute.of(context)!.settings.arguments.toString();
         _editedProduct =
             Provider.of<Products>(context, listen: false).findById(productId!);
         _initValues = {
@@ -67,7 +71,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
         title: Text('Edit Product'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              _saveForm();
+            },
             icon: Icon(Icons.save),
           ),
         ],
@@ -98,7 +104,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           id: _editedProduct.id,
                           description: _editedProduct.description,
                           imageUrl: _editedProduct.imageUrl,
-                          price: _editedProduct.price);
+                          price: _editedProduct.price,
+                          isFavorite: _editedProduct.isFavorite);
                     }
                   },
                 ),
@@ -124,7 +131,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           id: _editedProduct.id,
                           description: _editedProduct.description,
                           imageUrl: _editedProduct.imageUrl,
-                          price: double.parse(value));
+                          price: double.parse(value),
+                          isFavorite: _editedProduct.isFavorite);
                     }
                   },
                 ),
@@ -150,7 +158,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           id: _editedProduct.id,
                           description: value,
                           imageUrl: _editedProduct.imageUrl,
-                          price: _editedProduct.price);
+                          price: _editedProduct.price,
+                          isFavorite: _editedProduct.isFavorite);
                     }
                   },
                 ),
@@ -212,7 +221,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                 id: _editedProduct.id,
                                 description: _editedProduct.description,
                                 imageUrl: value,
-                                price: _editedProduct.price);
+                                price: _editedProduct.price,
+                                isFavorite: _editedProduct.isFavorite);
                           }
                         },
                       ),
