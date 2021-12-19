@@ -21,11 +21,11 @@ class ProductGrid extends StatelessWidget {
         mainAxisExtent: 240,
       ),
       itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
-        value: loadedProducts[index],
+        value: loadedProducts![index],
         child: ProductItem(),
       ),
       padding: const EdgeInsets.all(10),
-      itemCount: loadedProducts.length,
+      itemCount: loadedProducts!.length,
     );
   }
 }

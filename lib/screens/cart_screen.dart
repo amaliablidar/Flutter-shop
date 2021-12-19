@@ -101,14 +101,16 @@ class _OrderButtonState extends State<OrderButton> {
         style: TextStyle(color: Colors.white),
       ),
       onPressed: () async {
-        ;
         setState(() {
           _isLoading = true;
+          print("loading is true");
         });
         await Provider.of<Orders>(context, listen: false).addOrder(
             widget.cart.items.values.toList(), widget.cart.totalAmount);
         setState(() {
           _isLoading = false;
+          print("loading is false");
+          
         });
 
         widget.cart.clear();
