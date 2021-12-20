@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import './cart.dart';
@@ -22,8 +23,10 @@ class OrderItem {
 class Orders with ChangeNotifier {
   List<OrderItem>? _orders = [];
   final String? authToken;
+  final String? userId;
 
-  Orders([this.authToken, this._orders]);
+
+  Orders([this.authToken, this._orders, this.userId]);
 
   List<OrderItem> get orders {
     return [...?_orders];
@@ -31,18 +34,16 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     final url = Uri.parse(
-        'https://flutter-update.firebaseio.com/orders.json?auth=$authToken');
+        'https://flutter-shop-28ba1-default-rtdb.firebaseio.com/orders/$userId.json?auth=$authToken');
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
-    final extractedData = json.decode(response.body) as Map<String, dynamic>;
-    print('fetch start');
+    final Map<String, dynamic>? extractedData = json.decode(response.body);
+
     if (extractedData == null) {
       return;
     }
     
-    print('before extracting');
     extractedData.forEach((orderId, orderData) {
-      print('in loop');
     
       loadedOrders.add(
         OrderItem(
@@ -61,7 +62,6 @@ class Orders with ChangeNotifier {
               .toList(),
         ),
       );
-      print('after adding');
     });
     _orders = loadedOrders.reversed.toList();
     notifyListeners();
@@ -69,9 +69,8 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final url = Uri.parse(
-        'https://flutter-update.firebaseio.com/orders.json');
+        'https://flutter-shop-28ba1-default-rtdb.firebaseio.com/orders/$userId.json?auth=$authToken');
     final timestamp = DateTime.now();
-    print('before adding');
     final response = await http.post(
       url,
       body: json.encode({
@@ -87,7 +86,6 @@ class Orders with ChangeNotifier {
             .toList(),
       }),
     );
-    print('after');
     _orders!.insert(
       0,
       OrderItem(
@@ -99,7 +97,6 @@ class Orders with ChangeNotifier {
         products: cartProducts,
       ),
     );
-    print('after adding');
     notifyListeners();
   }
 }

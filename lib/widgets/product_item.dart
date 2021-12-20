@@ -10,7 +10,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
-    final authData = Provider.of<Auth>(context, listen:false);
+    final authData = Provider.of<Auth>(context, listen: false);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -25,11 +25,19 @@ class ProductItem extends StatelessWidget {
                     arguments: product.id,
                   );
                 },
-                child: Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                  height: 160,
-                  width: double.infinity,
+                child: Hero(
+                  tag: product.id,
+                  child: FadeInImage(
+                    placeholder: AssetImage(
+                      'assets/images/product-placeholder.png',
+                    ),
+                    image: NetworkImage(
+                      product.imageUrl,
+                    ),
+                    fit: BoxFit.cover,
+                    height: 160,
+                    width: double.infinity,
+                  ),
                 ),
               ),
               Container(
@@ -42,7 +50,8 @@ class ProductItem extends StatelessWidget {
                           : Icons.favorite_border,
                     ),
                     onPressed: () {
-                      product.toggleFavoriteStatus(authData.token);
+                      product.toggleFavoriteStatus(
+                          authData.token, authData.userId);
                     },
                     color: Theme.of(context).accentColor,
                   ),
